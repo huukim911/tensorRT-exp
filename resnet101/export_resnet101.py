@@ -62,3 +62,5 @@ torch.onnx.export(model, input_tensor, output_onnx,
                   "output": {0: "batch", 2: "height", 3: "width"}},
     verbose=False)
 
+# trtexec to create engine
+# /usr/src/tensorrt/bin/trtexec --onnx=fcn-resnet101.onnx --explicitBatch --fp16 --workspace=5000 --minShapes=input:1x3x256x256 --optShapes=input:1x3x1026x1282 --maxShapes=input:1x3x1440x2560 --buildOnly --saveEngine=fcn-resnet101.engine
