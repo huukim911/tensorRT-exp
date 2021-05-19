@@ -90,12 +90,29 @@ def infer(engine, input_file, output_file):
         img.convert('RGB').save(output_file, "PPM")
 
 # plot output image
-plt.imshow(Image.open(input_file))
+# plt.imshow(Image.open(input_file))
+# print(Image.open(input_file))
+# plt.show()
+# print(Image.open(output_file))
 
 # run infer
 print("Running TensorRT inference for FCN-ResNet101")
 with load_engine(engine_file) as engine:
     infer(engine, input_file, output_file)
 
-# segment output
-plt.imshow(Image.open(output_file))
+# # segment output
+# plt.imshow(Image.open(output_file))
+
+
+# 2nd infer with diff img size (cat 388x386)
+from io import BytesIO
+
+output_image="cat_input.ppm"
+
+# Read sample image input and save it in ppm format
+print("Exporting ppm image {}".format(output_image))
+
+with Image.open("cat.jpg")) as img:
+    ppm = Image.new("RGB", img.size, (255, 255, 255))
+    ppm.paste(img, mask=img.split()[3])
+    ppm.save(output_image)
