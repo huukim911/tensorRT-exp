@@ -105,14 +105,22 @@ with load_engine(engine_file) as engine:
 
 
 # 2nd infer with diff img size (cat 388x386)
+import requests
 from io import BytesIO
 
 output_image="cat_input.ppm"
 
 # Read sample image input and save it in ppm format
 print("Exporting ppm image {}".format(output_image))
-
-with Image.open("cat.jpg")) as img:
+# response = requests.get("https://github.com/huukim911/onnx-exp/blob/main/cat.jpg")
+with Image.open("cat.jpg") as img:
     ppm = Image.new("RGB", img.size, (255, 255, 255))
-    ppm.paste(img, mask=img.split()[3])
+    ppm.paste(img, mask=img.split()[2])
     ppm.save(output_image)
+
+# run infer 2nd
+input_file  = "cat_input.ppm"
+output_file = "cat_output.ppm"
+print("Running TensorRT inference for FCN-ResNet101 2nd time")
+with load_engine(engine_file) as engine:
+    infer(engine, input_file, output_file)
