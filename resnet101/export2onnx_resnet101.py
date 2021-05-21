@@ -17,6 +17,7 @@
 from PIL import Image
 from io import BytesIO
 import requests
+import os
 
 output_image="input.ppm"
 
@@ -51,16 +52,17 @@ model.eval()
 # Generate input tensor with random values
 input_tensor = torch.rand(4, 3, 224, 224)
 
-# Export torch model to ONNX
-print("Exporting ONNX model {}".format(output_onnx))
-torch.onnx.export(model, input_tensor, output_onnx,
-    opset_version=12,
-    do_constant_folding=True,
-    input_names=["input"],
-    output_names=["output"],
-    dynamic_axes={"input": {0: "batch", 2: "height", 3: "width"},
-                  "output": {0: "batch", 2: "height", 3: "width"}},
-    verbose=False)
+if not os.path.exists(output_onnx):
+    # Export torch model to ONNX
+    print("Exporting ONNX model {}".format(output_onnx))
+    torch.onnx.export(model, input_tensor, output_onnx,
+        opset_version=12,
+        do_constant_folding=True,
+        input_names=["input"],
+        output_names=["output"],
+        dynamic_axes={"input": {0: "batch", 2: "height", 3: "width"},
+                    "output": {0: "batch", 2: "height", 3: "width"}},
+        verbose=False)
 
 # trtexec to create engine
 # /usr/src/tensorrt/bin/trtexec --onnx=fcn-resnet101.onnx --explicitBatch --fp16 --workspace=5000 --minShapes=input:1x3x256x256 --optShapes=input:1x3x1026x1282 --maxShapes=input:1x3x1440x2560 --buildOnly --saveEngine=fcn-resnet101.engine

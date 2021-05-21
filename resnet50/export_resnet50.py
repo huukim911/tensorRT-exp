@@ -1,14 +1,16 @@
 import torchvision.models as models
 import torch
 import torch.onnx
+import os
 
 # load the pretrained model
 resnet50 = models.resnet50(pretrained=True, progress=False)
-
-# set up a dummy input tensor and export the model to ONNX
-BATCH_SIZE = 32
-dummy_input=torch.randn(BATCH_SIZE, 3, 224, 224)
-torch.onnx.export(resnet50, dummy_input, "resnet50_pytorch.onnx", verbose=False)
+output_onnx="resnet50_pytorch.onnx"
+if not os.path.exists(output_onnx):
+    # set up a dummy input tensor and export the model to ONNX
+    BATCH_SIZE = 32
+    dummy_input=torch.randn(BATCH_SIZE, 3, 224, 224)
+    torch.onnx.export(resnet50, dummy_input, output_onnx, verbose=False)
 
 # import os
 
